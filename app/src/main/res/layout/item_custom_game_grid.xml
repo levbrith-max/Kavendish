@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    item_custom_game_grid.xml
+
+    Contraintes d'icône :
+     • Taille fixe 64×64dp — jamais plus, jamais moins
+     • clipToOutline="true" + background arrondi → l'image ne dépasse pas
+     • scaleType="centerCrop" pour les assets Pegasus (remplissage sans débord)
+     • scaleType="centerInside" pour les icônes Android (pas d'agrandissement)
+       → géré côté adapter via Glide
+-->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:background="@drawable/bg_default_btn_transparent"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp"
+    android:paddingStart="4dp"
+    android:paddingEnd="4dp"
+    android:clipChildren="true"
+    android:clickable="true"
+    android:focusable="true">
+
+    <!-- Conteneur de l'icône + indicateur de sélection -->
+    <FrameLayout
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:clipChildren="true"
+        android:clipToPadding="true">
+
+        <!--
+            Icône du jeu :
+            • Taille exacte 64×64dp, ne dépasse jamais
+            • background arrondi → clip activé via clipToOutline (code)
+            • scaleType défini dans l'adapter selon le type d'image
+        -->
+        <ImageView
+            android:id="@+id/game_icon"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_gravity="center"
+            android:background="@drawable/bg_game_icon_round"
+            android:scaleType="centerCrop"
+            android:adjustViewBounds="false"
+            android:clipToOutline="true" />
+
+        <!-- Indicateur de sélection (anneau lumineux) -->
+        <View
+            android:id="@+id/item_selector"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_gravity="center"
+            android:background="@drawable/bg_game_icon_selected"
+            android:visibility="invisible" />
+    </FrameLayout>
+
+    <!-- Nom du jeu -->
+    <TextView
+        android:id="@+id/game_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:textSize="10sp"
+        android:textColor="#FFFFFFFF"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:minLines="1"
+        android:gravity="center_horizontal"
+        android:lineSpacingMultiplier="1.1" />
+
+    <!-- Badge collection (Pegasus uniquement) -->
+    <TextView
+        android:id="@+id/game_badge"
+        android:layout_width="wrap_content"
+        android:layout_height="14dp"
+        android:layout_marginTop="2dp"
+        android:paddingStart="4dp"
+        android:paddingEnd="4dp"
+        android:textSize="7sp"
+        android:textColor="#FFf27a0f"
+        android:background="@drawable/bg_badge_collection"
+        android:singleLine="true"
+        android:ellipsize="end"
+        android:maxWidth="72dp"
+        android:visibility="gone"
+        android:gravity="center" />
+
+</LinearLayout>

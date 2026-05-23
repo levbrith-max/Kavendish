@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    fragment_my_game_extended.xml
+
+    Couches d'arrière-plan (de bas en haut) :
+      1. iv_default_bg  → fond par défaut de l'app (toujours présent)
+      2. iv_dynamic_bg  → assets.background du jeu sélectionné (alpha 0 par défaut)
+      3. Overlay sombre → assure la lisibilité des icônes
+      4. RecyclerView   → grille de jeux
+      5. Boutons Ajouter en bas à gauche
+-->
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipChildren="true">
+
+    <!-- ── COUCHE 1 : fond par défaut (toujours visible) ── -->
+    <ImageView
+        android:id="@+id/iv_default_bg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/game_space_main_page_defaultbg"
+        android:scaleType="centerCrop"
+        android:alpha="1.0" />
+
+    <!-- ── COUCHE 2 : fond dynamique Pegasus (alpha 0 par défaut, crossfade) ── -->
+    <ImageView
+        android:id="@+id/iv_dynamic_bg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:alpha="0.0" />
+
+    <!-- ── COUCHE 3 : vignette sombre pour lisibilité ── -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#55000000" />
+
+    <!-- ── COUCHE 4 : grille des jeux ── -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_custom_games"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="58dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="56dp"
+        android:layout_marginBottom="76dp"
+        android:scrollbars="none"
+        android:clipToPadding="false"
+        android:clipChildren="true"
+        android:padding="6dp"
+        android:visibility="gone" />
+
+    <!-- ── État vide ── -->
+    <LinearLayout
+        android:id="@+id/empty_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:src="@drawable/ic_game_placeholder"
+            android:alpha="0.45"
+            android:scaleType="centerInside" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/gs_no_custom_games"
+            android:textColor="#99ffffff"
+            android:textSize="13sp"
+            android:gravity="center" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="@string/gs_add_game_hint"
+            android:textColor="#66ffffff"
+            android:textSize="10sp"
+            android:gravity="center" />
+    </LinearLayout>
+
+    <!-- ── COUCHE 5 : boutons en bas à gauche ── -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="12dp"
+        android:layout_marginBottom="18dp"
+        android:orientation="vertical"
+        android:gravity="start">
+
+        <!-- Bouton "Ajouter un jeu" -->
+        <RelativeLayout
+            android:id="@+id/btn_add_game"
+            android:layout_width="148dp"
+            android:layout_height="36dp"
+            android:layout_marginBottom="7dp"
+            android:background="@drawable/bg_add_button"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:id="@+id/ic_add_game"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="10dp"
+                android:src="@drawable/ic_add_game"
+                android:scaleType="centerInside" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@id/ic_add_game"
+                android:layout_marginStart="6dp"
+                android:layout_marginEnd="10dp"
+                android:text="@string/gs_add_game"
+                android:textColor="#FFFFFFFF"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:singleLine="true" />
+        </RelativeLayout>
+
+        <!-- Bouton "Ajouter une collection" -->
+        <RelativeLayout
+            android:id="@+id/btn_add_collection"
+            android:layout_width="148dp"
+            android:layout_height="36dp"
+            android:background="@drawable/bg_add_button_secondary"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:id="@+id/ic_add_collection"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="10dp"
+                android:src="@drawable/ic_add_collection"
+                android:scaleType="centerInside" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@id/ic_add_collection"
+                android:layout_marginStart="6dp"
+                android:layout_marginEnd="10dp"
+                android:text="@string/gs_add_collection"
+                android:textColor="#CCffffff"
+                android:textSize="11sp"
+                android:singleLine="true" />
+        </RelativeLayout>
+    </LinearLayout>
+
+</RelativeLayout>

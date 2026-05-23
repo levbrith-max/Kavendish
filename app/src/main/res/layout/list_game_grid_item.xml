@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:gravity="center_horizontal" android:orientation="vertical" android:background="@drawable/bg_default_btn_transparent" android:paddingTop="@dimen/game_item_def_padding" android:paddingBottom="@dimen/game_item_def_padding" android:layout_width="fill_parent" android:layout_height="wrap_content"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <com.vivo.game.core.ui.widget.GameIconImageView android:layout_gravity="center" android:id="@id/game_icon" android:layout_width="fill_parent" android:layout_height="0.0dip" android:scaleType="fitCenter" android:layout_marginStart="@dimen/game_item_def_padding" android:layout_marginEnd="@dimen/game_item_def_padding" android:transitionName="@string/image_transition_name" app:rci_cornerRadius="14.0dip" />
+    <TextView android:textSize="@dimen/font_size_t8" android:textColor="@color/game_text_primary" android:ellipsize="end" android:id="@id/game_name" android:layout_width="fill_parent" android:layout_height="32.0dip" android:layout_marginTop="7.0dip" android:maxLines="2" android:layout_marginStart="@dimen/game_item_def_padding" android:layout_marginEnd="@dimen/game_item_def_padding" />
+    <LinearLayout android:gravity="start|center" android:orientation="horizontal" android:id="@id/game_extra_container" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="2.0dip" android:layout_marginStart="8.0dip">
+        <TextView android:textSize="@dimen/font_size_t10" android:textColor="@color/game_common_color_yellow_text" android:id="@id/game_score" android:layout_width="wrap_content" android:layout_height="wrap_content" android:drawablePadding="2.0dip" android:drawableStart="@drawable/ic_score_star" />
+        <View android:id="@id/game_score_div" android:background="#ffd1d1d1" android:layout_width="1.0dip" android:layout_height="10.0dip" android:layout_marginStart="4.0dip" android:layout_marginEnd="4.0dip" />
+        <TextView android:textSize="@dimen/font_size_t10" android:textColor="#ffa2a2a2" android:ellipsize="end" android:id="@id/game_size" android:layout_width="fill_parent" android:layout_height="wrap_content" android:singleLine="true" />
+    </LinearLayout>
+    <LinearLayout android:gravity="center_vertical" android:id="@id/download_progress_container" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="2.0dip" android:layout_marginStart="@dimen/game_item_def_padding" android:layout_marginEnd="@dimen/game_item_def_padding">
+        <com.vivo.game.core.ui.widget.StreamProgressBar android:id="@id/download_progress_bar" android:layout_width="0.0dip" android:layout_weight="1.0" style="@style/small_download_progress_bar" />
+        <TextView style="@style/download_grid_progress_text" />
+    </LinearLayout>
+    <com.vivo.game.pm.widget.DownloadBtn android:layout_gravity="center_horizontal" android:id="@id/download_btn" android:layout_width="fill_parent" android:layout_marginTop="8.0dip" android:layout_marginStart="12.0dip" android:layout_marginEnd="12.0dip" style="@style/download_btn_small" />
+</LinearLayout>
