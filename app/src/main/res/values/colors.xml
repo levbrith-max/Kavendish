@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#ff000000</color>
+    <color name="white">#ffffffff</color>
+    <color name="game_text_primary">#FFFFFFFF</color>
+    <color name="game_text_secondary">#99FFFFFF</color>
+    <color name="game_space_sub_text">#ffa2a2a2</color>
+    <color name="game_common_color_yellow_text">#ffffcc00</color>
+    <color name="game_orange">#FFf37b10</color>
+    <color name="game_red">#FFe70000</color>
+    <color name="c_f27a0f">#fff27a0f</color>
+    <color name="c_4df27a0f">#4df27a0f</color>
+    <color name="c_20668bdd">#20668bdd</color>
+    <color name="c_668bdd">#ff668bdd</color>
+    <color name="c_99ffffff">#99ffffff</color>
+    <color name="c_deffffff">#deffffff</color>
+    <color name="game_bg_dark">#FF0A0A1A</color>
+    <color name="transparent">#00000000</color>
+</resources>
