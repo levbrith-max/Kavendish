@@ -1,17 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!-- Thème principal de l'app — fond sombre, pas de barre de titre -->
     <style name="game_theme" parent="Theme.AppCompat.NoActionBar">
         <item name="android:windowBackground">@color/game_bg_dark</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
-        <item name="android:windowLayoutInDisplayCutoutMode" tools:targetApi="o_mr1">shortEdges</item>
         <item name="colorPrimary">@color/game_orange</item>
         <item name="colorAccent">@color/game_orange</item>
     </style>
 
-    <!-- Plein écran pour les activités principales du Game Space -->
     <style name="game_space_full_screen" parent="game_theme">
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowContentOverlay">@null</item>
@@ -20,12 +17,10 @@
         <item name="android:windowTranslucentStatus">true</item>
     </style>
 
-    <!-- Style du splash screen -->
     <style name="game_space_splash" parent="game_space_full_screen">
         <item name="android:windowBackground">@color/game_bg_dark</item>
     </style>
 
-    <!-- Style ouverture (open jump) -->
     <style name="game_open_jump" parent="game_theme">
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
@@ -33,6 +28,3 @@
     </style>
 
 </resources>
-
-<!-- tools namespace pour targetApi -->
-<!-- xmlns:tools="http://schemas.android.com/tools" -->
