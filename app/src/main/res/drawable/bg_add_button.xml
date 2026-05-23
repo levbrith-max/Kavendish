@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Bouton principal : dégradé orange-rouge style gaming Vivo -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true">
+        <shape android:shape="rectangle">
+            <gradient
+                android:angle="0"
+                android:startColor="#FFc85000"
+                android:endColor="#FFe03000"
+                android:type="linear" />
+            <corners android:radius="18dp" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:angle="0"
+                android:startColor="#FFe70000"
+                android:endColor="#FFf37b10"
+                android:type="linear" />
+            <corners android:radius="18dp" />
+            <stroke android:width="0.5dp" android:color="#30FFFFFF" />
+        </shape>
+    </item>
+</selector>

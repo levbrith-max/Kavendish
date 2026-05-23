@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="20dp"
+    android:height="20dp"
+    android:viewportWidth="20"
+    android:viewportHeight="20">
+
+    <!-- Cercle bleu-gris -->
+    <path
+        android:fillColor="#FF607D8B"
+        android:pathData="M10,1 C5.03,1 1,5.03 1,10 C1,14.97 5.03,19 10,19 C14.97,19 19,14.97 19,10 C19,5.03 14.97,1 10,1 Z" />
+
+    <!-- Point du i -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M10,5.5 m-1,0 a1,1 0 1,0 2,0 a1,1 0 1,0 -2,0" />
+
+    <!-- Barre du i -->
+    <path
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000"
+        android:pathData="M10,9 L10,14.5" />
+</vector>

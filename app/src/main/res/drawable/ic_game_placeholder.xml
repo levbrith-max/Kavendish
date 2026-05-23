@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="60dp"
+    android:height="60dp"
+    android:viewportWidth="60"
+    android:viewportHeight="60">
+
+    <!-- Fond arrondi sombre -->
+    <path
+        android:fillColor="#33FFFFFF"
+        android:pathData="M10,0 L50,0 C55.5,0 60,4.5 60,10 L60,50 C60,55.5 55.5,60 50,60 L10,60 C4.5,60 0,55.5 0,50 L0,10 C0,4.5 4.5,0 10,0 Z" />
+
+    <!-- Joystick stylisé -->
+    <path
+        android:fillColor="#66FFFFFF"
+        android:pathData="M30,12 C27.2,12 25,14.2 25,17 L25,24 L18,24 C15.2,24 13,26.2 13,29 L13,43 C13,45.8 15.2,48 18,48 L42,48 C44.8,48 47,45.8 47,43 L47,29 C47,26.2 44.8,24 42,24 L35,24 L35,17 C35,14.2 32.8,12 30,12 Z" />
+
+    <!-- D-pad -->
+    <path
+        android:fillColor="#33000000"
+        android:pathData="M22,33 L25,33 L25,30 L27,30 L27,33 L30,33 L30,35 L27,35 L27,38 L25,38 L25,35 L22,35 Z" />
+
+    <!-- Boutons A/B -->
+    <path
+        android:fillColor="#AAf37b10"
+        android:pathData="M38,31 m-3,0 a3,3 0 1,0 6,0 a3,3 0 1,0 -6,0" />
+    <path
+        android:fillColor="#AAe70000"
+        android:pathData="M43,36 m-3,0 a3,3 0 1,0 6,0 a3,3 0 1,0 -6,0" />
+</vector>
