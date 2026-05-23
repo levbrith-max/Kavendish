@@ -1,230 +1,229 @@
 name: Build VivoGameSpace APK
 
 on:
- push:
- branches: [ main, master, develop ]
- tags:
- - 'v*'
- pull_request:
- branches: [ main, master ]
- workflow_dispatch:
- inputs:
- build_type:
- description: 'Build type (debug or release)'
- required: true
- default: 'debug'
- type: choice
- options:
- - debug
- - release
+  push:
+    branches: [ main, master, develop ]
+    tags:
+      - 'v*'
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+    inputs:
+      build_type:
+        description: 'Build type (debug or release)'
+        required: true
+        default: 'debug'
+        type: choice
+        options:
+          - debug
+          - release
 
 env:
- JAVA_VERSION: '17'
- ANDROID_COMPILE_SDK: '34'
- ANDROID_BUILD_TOOLS: '34.0.0'
- GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.parallel=true -Dorg.gradle.caching=true"
+  JAVA_VERSION: '17'
+  ANDROID_COMPILE_SDK: '34'
+  ANDROID_BUILD_TOOLS: '34.0.0'
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.parallel=true -Dorg.gradle.caching=true"
 
 jobs:
- # ═══════════════════════════════════════════════════════════════
- # JOB 1 : Build debug APK (toujours)
- # ═══════════════════════════════════════════════════════════════
- build-debug:
- name: Build Debug APK
- runs-on: ubuntu-latest
- if: github.event.inputs.build_type != 'release'
 
- steps:
- - name: Checkout code
- uses: actions/checkout@v4
+  # -------------------------------------------------------------------
+  # JOB 1 : Build debug APK
+  # -------------------------------------------------------------------
+  build-debug:
+    name: Build Debug APK
+    runs-on: ubuntu-latest
+    if: github.event.inputs.build_type != 'release'
 
- - name: Set up JDK ${{ env.JAVA_VERSION }}
- uses: actions/setup-java@v4
- with:
- java-version: ${{ env.JAVA_VERSION }}
- distribution: 'temurin'
- cache: gradle
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
- - name: Setup Android SDK
- uses: android-actions/setup-android@v3
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: gradle
 
- - name: Grant execute permission to gradlew
- run: chmod +x gradlew
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
 
- - name: Cache Gradle packages
- uses: actions/cache@v4
- with:
- path: |
- ~/.gradle/caches
- ~/.gradle/wrapper
- key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', '**/libs.versions.toml') }}
- restore-keys: |
- gradle-${{ runner.os }}-
+      - name: Grant execute permission to gradlew
+        run: chmod +x gradlew
 
- - name: Clean project
- run: ./gradlew clean
+      - name: Cache Gradle packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', '**/libs.versions.toml') }}
+          restore-keys: |
+            gradle-${{ runner.os }}-
 
- - name: Run lint
- run: ./gradlew lintDebug
- continue-on-error: true
+      - name: Clean project
+        run: ./gradlew clean
 
- - name: Build Debug APK
- run: ./gradlew assembleDebug
+      - name: Run lint
+        run: ./gradlew lintDebug
+        continue-on-error: true
 
- - name: Upload lint results
- uses: actions/upload-artifact@v4
- if: always()
- with:
- name: lint-results
- path: app/build/reports/lint-results-debug.html
- retention-days: 7
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug
 
- - name: Upload Debug APK
- uses: actions/upload-artifact@v4
- with:
- name: vivo-gamespace-debug-${{ github.run_number }}
- path: app/build/outputs/apk/debug/*.apk
- retention-days: 30
+      - name: Upload lint results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lint-results
+          path: app/build/reports/lint-results-debug.html
+          retention-days: 7
 
- - name: ℹ APK Info
- run: |
- echo "## Build Summary" >> $GITHUB_STEP_SUMMARY
- echo "" >> $GITHUB_STEP_SUMMARY
- echo "| Property | Value |" >> $GITHUB_STEP_SUMMARY
- echo "|----------|-------|" >> $GITHUB_STEP_SUMMARY
- echo "| Build type | Debug |" >> $GITHUB_STEP_SUMMARY
- echo "| Branch | ${{ github.ref_name }} |" >> $GITHUB_STEP_SUMMARY
- echo "| Commit | ${{ github.sha }} |" >> $GITHUB_STEP_SUMMARY
- echo "| Run | #${{ github.run_number }} |" >> $GITHUB_STEP_SUMMARY
- APK=$(find app/build/outputs/apk/debug -name "*.apk" | head -1)
- if [ -f "$APK" ]; then
- SIZE=$(du -h "$APK" | cut -f1)
- echo "| APK size | $SIZE |" >> $GITHUB_STEP_SUMMARY
- fi
+      - name: Upload Debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: vivo-gamespace-debug-${{ github.run_number }}
+          path: app/build/outputs/apk/debug/*.apk
+          retention-days: 30
 
- # ═══════════════════════════════════════════════════════════════
- # JOB 2 : Build release APK (sur tag v* ou workflow_dispatch)
- # ═══════════════════════════════════════════════════════════════
- build-release:
- name: Build Release APK
- runs-on: ubuntu-latest
- if: startsWith(github.ref, 'refs/tags/v') || github.event.inputs.build_type == 'release'
+      - name: Build summary
+        run: |
+          echo "## Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Property | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|----------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Build type | Debug |" >> $GITHUB_STEP_SUMMARY
+          echo "| Branch | ${{ github.ref_name }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Commit | ${{ github.sha }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Run | #${{ github.run_number }} |" >> $GITHUB_STEP_SUMMARY
+          APK=$(find app/build/outputs/apk/debug -name "*.apk" | head -1)
+          if [ -f "$APK" ]; then
+            SIZE=$(du -h "$APK" | cut -f1)
+            echo "| APK size | $SIZE |" >> $GITHUB_STEP_SUMMARY
+          fi
 
- steps:
- - name: Checkout code
- uses: actions/checkout@v4
+  # -------------------------------------------------------------------
+  # JOB 2 : Build release APK (sur tag v* ou workflow_dispatch release)
+  # -------------------------------------------------------------------
+  build-release:
+    name: Build Release APK
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v') || github.event.inputs.build_type == 'release'
 
- - name: Set up JDK ${{ env.JAVA_VERSION }}
- uses: actions/setup-java@v4
- with:
- java-version: ${{ env.JAVA_VERSION }}
- distribution: 'temurin'
- cache: gradle
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
- - name: Setup Android SDK
- uses: android-actions/setup-android@v3
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: gradle
 
- - name: Grant execute permission to gradlew
- run: chmod +x gradlew
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
 
- - name: Cache Gradle packages
- uses: actions/cache@v4
- with:
- path: |
- ~/.gradle/caches
- ~/.gradle/wrapper
- key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', '**/libs.versions.toml') }}
- restore-keys: |
- gradle-${{ runner.os }}-
+      - name: Grant execute permission to gradlew
+        run: chmod +x gradlew
 
- # ── Signature avec keystore stocké en secret GitHub ──────────
- - name: Decode Keystore
- if: ${{ env.KEYSTORE_BASE64 != '' }}
- env:
- KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
- run: |
- echo "$KEYSTORE_BASE64" | base64 -d > ${{ runner.temp }}/keystore.jks
+      - name: Cache Gradle packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', '**/libs.versions.toml') }}
+          restore-keys: |
+            gradle-${{ runner.os }}-
 
- - name: Build Release APK (signed)
- if: ${{ env.KEYSTORE_BASE64 != '' }}
- env:
- KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
- KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
- KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
- STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
- run: |
- ./gradlew assembleRelease \
- -Pandroid.injected.signing.store.file=${{ runner.temp }}/keystore.jks \
- -Pandroid.injected.signing.store.password=$STORE_PASSWORD \
- -Pandroid.injected.signing.key.alias=$KEY_ALIAS \
- -Pandroid.injected.signing.key.password=$KEY_PASSWORD
+      - name: Decode Keystore
+        if: ${{ env.KEYSTORE_BASE64 != '' }}
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        run: echo "$KEYSTORE_BASE64" | base64 -d > ${{ runner.temp }}/keystore.jks
 
- - name: Build Release APK (unsigned — pas de keystore configuré)
- if: ${{ env.KEYSTORE_BASE64 == '' }}
- env:
- KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
- run: ./gradlew assembleRelease
+      - name: Build Release APK (signed)
+        if: ${{ env.KEYSTORE_BASE64 != '' }}
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+        run: |
+          ./gradlew assembleRelease \
+            -Pandroid.injected.signing.store.file=${{ runner.temp }}/keystore.jks \
+            -Pandroid.injected.signing.store.password=$STORE_PASSWORD \
+            -Pandroid.injected.signing.key.alias=$KEY_ALIAS \
+            -Pandroid.injected.signing.key.password=$KEY_PASSWORD
 
- - name: Upload Release APK
- uses: actions/upload-artifact@v4
- with:
- name: vivo-gamespace-release-${{ github.ref_name }}
- path: app/build/outputs/apk/release/*.apk
- retention-days: 90
+      - name: Build Release APK (unsigned)
+        if: ${{ env.KEYSTORE_BASE64 == '' }}
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        run: ./gradlew assembleRelease
 
- # ── Créer une GitHub Release sur tag ─────────────────────────
- - name: Create GitHub Release
- if: startsWith(github.ref, 'refs/tags/v')
- uses: softprops/action-gh-release@v2
- with:
- name: "VivoGameSpace ${{ github.ref_name }}"
- body: |
- ## VivoGameSpace ${{ github.ref_name }}
+      - name: Upload Release APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: vivo-gamespace-release-${{ github.ref_name }}
+          path: app/build/outputs/apk/release/*.apk
+          retention-days: 90
 
- ### Nouveautés
- - Ajout de jeux depuis les applications installées
- - Import de collections via fichiers metadata Pegasus
- - Nettoyage automatique lors de la sortie de l'app
- - Compatible avec tous les appareils Android (non limité aux Vivo)
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "VivoGameSpace ${{ github.ref_name }}"
+          body: |
+            ## VivoGameSpace ${{ github.ref_name }}
 
- ### Installation
- Téléchargez et installez le fichier `.apk` ci-dessous.
- Activez "Sources inconnues" dans les paramètres de sécurité de votre appareil.
- files: |
- app/build/outputs/apk/release/*.apk
- draft: false
- prerelease: ${{ contains(github.ref_name, 'alpha') || contains(github.ref_name, 'beta') }}
+            ### Nouveautes
+            - Ajout de jeux depuis les applications installees
+            - Import de collections via fichiers metadata Pegasus
+            - Arriere-plan dynamique selon assets.background du jeu selectionne
+            - Nettoyage automatique lors de la sortie de l'app
+            - Compatible avec tous les appareils Android (non limite aux Vivo)
 
- # ═══════════════════════════════════════════════════════════════
- # JOB 3 : Tests unitaires
- # ═══════════════════════════════════════════════════════════════
- test:
- name: Unit Tests
- runs-on: ubuntu-latest
+            ### Installation
+            Telechargez et installez le fichier .apk ci-dessous.
+            Activez "Sources inconnues" dans les parametres de securite de votre appareil.
+          files: |
+            app/build/outputs/apk/release/*.apk
+          draft: false
+          prerelease: ${{ contains(github.ref_name, 'alpha') || contains(github.ref_name, 'beta') }}
 
- steps:
- - name: Checkout code
- uses: actions/checkout@v4
+  # -------------------------------------------------------------------
+  # JOB 3 : Tests unitaires
+  # -------------------------------------------------------------------
+  test:
+    name: Unit Tests
+    runs-on: ubuntu-latest
 
- - name: Set up JDK ${{ env.JAVA_VERSION }}
- uses: actions/setup-java@v4
- with:
- java-version: ${{ env.JAVA_VERSION }}
- distribution: 'temurin'
- cache: gradle
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
- - name: Setup Android SDK
- uses: android-actions/setup-android@v3
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: gradle
 
- - name: Grant execute permission to gradlew
- run: chmod +x gradlew
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
 
- - name: Run Unit Tests
- run: ./gradlew testDebugUnitTest
+      - name: Grant execute permission to gradlew
+        run: chmod +x gradlew
 
- - name: Upload test results
- uses: actions/upload-artifact@v4
- if: always()
- with:
- name: test-results
- path: app/build/reports/tests/
- retention-days: 7
+      - name: Run Unit Tests
+        run: ./gradlew testDebugUnitTest
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results
+          path: app/build/reports/tests/
+          retention-days: 7
