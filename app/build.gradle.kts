@@ -14,7 +14,6 @@ android {
         targetSdk = 34
         versionCode = 32021
         versionName = "3.2.2.1"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -45,13 +44,6 @@ android {
         viewBinding = true
         buildConfig = true
     }
-
-    // Allow using resources from the original decompiled APK
-    sourceSets {
-        getByName("main") {
-            res.srcDirs("src/main/res")
-        }
-    }
 }
 
 dependencies {
@@ -63,22 +55,17 @@ dependencies {
     implementation(libs.activity.ktx)
     implementation(libs.fragment.ktx)
 
-    // Room database
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
     kapt(libs.room.compiler)
 
-    // Lifecycle
     implementation(libs.lifecycle.viewmodel.ktx)
     implementation(libs.lifecycle.livedata.ktx)
 
-    // Coroutines
     implementation(libs.kotlinx.coroutines.android)
 
-    // Gson
     implementation(libs.gson)
 
-    // Glide for image loading
     implementation(libs.glide)
     kapt(libs.glide.compiler)
 }
