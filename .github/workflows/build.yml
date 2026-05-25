@@ -20,9 +20,7 @@ on:
 
 env:
   JAVA_VERSION: '17'
-  ANDROID_COMPILE_SDK: '34'
-  ANDROID_BUILD_TOOLS: '34.0.0'
-  GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.parallel=true -Dorg.gradle.caching=true"
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.parallel=true"
 
 jobs:
 
@@ -43,13 +41,6 @@ jobs:
         with:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: 'temurin'
-          cache: gradle
-
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Make gradlew executable
-        run: chmod +x gradlew
 
       - name: Cache Gradle packages
         uses: actions/cache@v4
@@ -61,23 +52,11 @@ jobs:
           restore-keys: |
             gradle-${{ runner.os }}-
 
-      - name: Clean project
-        run: ./gradlew clean
-
-      - name: Run lint
-        run: ./gradlew lintDebug
-        continue-on-error: true
+      - name: Make gradlew executable
+        run: chmod +x gradlew
 
       - name: Build Debug APK
         run: ./gradlew assembleDebug
-
-      - name: Upload lint results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: lint-results
-          path: app/build/reports/lint-results-debug.html
-          retention-days: 7
 
       - name: Upload Debug APK
         uses: actions/upload-artifact@v4
@@ -85,22 +64,6 @@ jobs:
           name: vivo-gamespace-debug-${{ github.run_number }}
           path: app/build/outputs/apk/debug/*.apk
           retention-days: 30
-
-      - name: Build summary
-        run: |
-          echo "## Build Summary" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "| Property | Value |" >> $GITHUB_STEP_SUMMARY
-          echo "|----------|-------|" >> $GITHUB_STEP_SUMMARY
-          echo "| Build type | Debug |" >> $GITHUB_STEP_SUMMARY
-          echo "| Branch | ${{ github.ref_name }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Commit | ${{ github.sha }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Run | #${{ github.run_number }} |" >> $GITHUB_STEP_SUMMARY
-          APK=$(find app/build/outputs/apk/debug -name "*.apk" | head -1)
-          if [ -f "$APK" ]; then
-            SIZE=$(du -h "$APK" | cut -f1)
-            echo "| APK size | $SIZE |" >> $GITHUB_STEP_SUMMARY
-          fi
 
   # -------------------------------------------------------------------
   # JOB 2 : Build release APK (sur tag v* ou workflow_dispatch release)
@@ -119,13 +82,6 @@ jobs:
         with:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: 'temurin'
-          cache: gradle
-
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Make gradlew executable
-        run: chmod +x gradlew
 
       - name: Cache Gradle packages
         uses: actions/cache@v4
@@ -137,30 +93,24 @@ jobs:
           restore-keys: |
             gradle-${{ runner.os }}-
 
+      - name: Make gradlew executable
+        run: chmod +x gradlew
+
       - name: Decode Keystore
-        if: ${{ env.KEYSTORE_BASE64 != '' }}
-        env:
-          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
-        run: echo "$KEYSTORE_BASE64" | base64 -d > ${{ runner.temp }}/keystore.jks
+        if: ${{ secrets.KEYSTORE_BASE64 != '' }}
+        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > ${{ runner.temp }}/keystore.jks
 
       - name: Build Release APK (signed)
-        if: ${{ env.KEYSTORE_BASE64 != '' }}
-        env:
-          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
-          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+        if: ${{ secrets.KEYSTORE_BASE64 != '' }}
         run: |
           ./gradlew assembleRelease \
             -Pandroid.injected.signing.store.file=${{ runner.temp }}/keystore.jks \
-            -Pandroid.injected.signing.store.password=$STORE_PASSWORD \
-            -Pandroid.injected.signing.key.alias=$KEY_ALIAS \
-            -Pandroid.injected.signing.key.password=$KEY_PASSWORD
+            -Pandroid.injected.signing.store.password=${{ secrets.STORE_PASSWORD }} \
+            -Pandroid.injected.signing.key.alias=${{ secrets.KEY_ALIAS }} \
+            -Pandroid.injected.signing.key.password=${{ secrets.KEY_PASSWORD }}
 
       - name: Build Release APK (unsigned)
-        if: ${{ env.KEYSTORE_BASE64 == '' }}
-        env:
-          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        if: ${{ secrets.KEYSTORE_BASE64 == '' }}
         run: ./gradlew assembleRelease
 
       - name: Upload Release APK
@@ -176,20 +126,17 @@ jobs:
         with:
           name: "VivoGameSpace ${{ github.ref_name }}"
           body: |
-            ## VivoGameSpace ${{ github.ref_name }}
+            VivoGameSpace ${{ github.ref_name }}
 
-            ### Nouveautes
+            Nouveautes
             - Ajout de jeux depuis les applications installees
             - Import de collections via fichiers metadata Pegasus
-            - Arriere-plan dynamique selon assets.background du jeu selectionne
-            - Nettoyage automatique lors de la sortie de l'app
-            - Compatible avec tous les appareils Android (non limite aux Vivo)
+            - Arriere-plan dynamique selon assets.background
+            - Nettoyage automatique a la sortie
+            - Compatible tous appareils Android 6+
 
-            ### Installation
-            Telechargez et installez le fichier .apk ci-dessous.
-            Activez "Sources inconnues" dans les parametres de securite de votre appareil.
-          files: |
-            app/build/outputs/apk/release/*.apk
+            Telechargez le fichier .apk et activez Sources inconnues pour installer.
+          files: app/build/outputs/apk/release/*.apk
           draft: false
           prerelease: ${{ contains(github.ref_name, 'alpha') || contains(github.ref_name, 'beta') }}
 
@@ -209,10 +156,16 @@ jobs:
         with:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: 'temurin'
-          cache: gradle
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+      - name: Cache Gradle packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', '**/libs.versions.toml') }}
+          restore-keys: |
+            gradle-${{ runner.os }}-
 
       - name: Make gradlew executable
         run: chmod +x gradlew
