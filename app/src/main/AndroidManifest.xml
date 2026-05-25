@@ -2,7 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.vivo.game">
 
-    <!-- Original permissions -->
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
@@ -17,12 +16,8 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
-
-    <!-- Android 13+ storage -->
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
-
-    <!-- Needed to launch apps -->
     <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
@@ -35,15 +30,12 @@
         android:supportsRtl="true"
         android:theme="@style/game_theme">
 
-        <!-- ============================================================ -->
-        <!--  ORIGINAL ACTIVITIES (kept as-is)                            -->
-        <!-- ============================================================ -->
         <activity
+            android:name=".gamespace.ui.GameSpaceSplashActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="true"
             android:label="@string/game_app_name"
             android:launchMode="singleTop"
-            android:name=".gamespace.ui.GameSpaceSplashActivity"
             android:screenOrientation="landscape"
             android:theme="@style/game_space_full_screen"
             android:windowSoftInputMode="adjustNothing">
@@ -54,60 +46,44 @@
         </activity>
 
         <activity
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/game_app_name"
-            android:launchMode="singleTop"
             android:name=".gamespace.ui.GameSpaceHostActivity"
-            android:screenOrientation="landscape"
-            android:theme="@style/game_space_full_screen"
-            android:windowSoftInputMode="adjustNothing" />
-
-        <activity
             android:configChanges="keyboardHidden|orientation|screenSize"
+            android:exported="false"
             android:launchMode="singleTop"
-            android:name=".gamespace.ui.GameSpaceUsageActivity"
             android:screenOrientation="landscape"
             android:theme="@style/game_space_full_screen"
             android:windowSoftInputMode="adjustNothing" />
 
         <activity
-            android:configChanges="keyboardHidden"
-            android:launchMode="singleTop"
             android:name=".gamespace.ui.PrivacySettingsActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:exported="false"
+            android:launchMode="singleTop"
             android:screenOrientation="landscape"
             android:theme="@style/game_space_full_screen"
             android:windowSoftInputMode="adjustNothing" />
 
-        <!-- ============================================================ -->
-        <!--  NEW ACTIVITIES — ajout jeu & collection                     -->
-        <!-- ============================================================ -->
-
-        <!-- Add Game Activity: sélectionner une app installée -->
         <activity
-            android:configChanges="keyboardHidden|orientation|screenSize"
             android:name=".gamespace.ui.add.AddGameActivity"
-            android:screenOrientation="landscape"
-            android:theme="@style/game_space_full_screen"
-            android:windowSoftInputMode="adjustNothing"
-            android:exported="false" />
-
-        <!-- Add Collection Activity: importer depuis fichier metadata Pegasus -->
-        <activity
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:name=".gamespace.ui.collection.AddCollectionActivity"
+            android:exported="false"
             android:screenOrientation="landscape"
             android:theme="@style/game_space_full_screen"
-            android:windowSoftInputMode="adjustNothing"
-            android:exported="false" />
+            android:windowSoftInputMode="adjustNothing" />
 
-        <!-- ============================================================ -->
-        <!--  PROVIDERS                                                    -->
-        <!-- ============================================================ -->
+        <activity
+            android:name=".gamespace.ui.collection.AddCollectionActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:exported="false"
+            android:screenOrientation="landscape"
+            android:theme="@style/game_space_full_screen"
+            android:windowSoftInputMode="adjustNothing" />
+
         <provider
+            android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
             android:exported="false"
-            android:grantUriPermissions="true"
-            android:name="androidx.core.content.FileProvider">
+            android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
